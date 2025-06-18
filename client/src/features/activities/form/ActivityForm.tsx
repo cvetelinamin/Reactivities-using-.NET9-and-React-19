@@ -1,11 +1,16 @@
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { useActivities } from '../../../lib/hooks/useActivities';
 import { useParams } from 'react-router';
-import { useForm, type FieldValues } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { activitySchema, type ActivitySchema } from '../../../lib/schemas/activitySchema';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function ActivityForm() {
-    const { register, reset, handleSubmit } = useForm();
+    const { register, reset, handleSubmit, formState: { errors } } = useForm<ActivitySchema>({
+        mode: 'onTouched',
+        resolver: zodResolver(activitySchema)
+    });
     const { id } = useParams();
     const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id);
 
@@ -13,7 +18,7 @@ export default function ActivityForm() {
         if (activity) reset(activity);
     }, [activity, reset])
 
-    const onSubmit = async (data: FieldValues) => {
+    const onSubmit = async (data: ActivitySchema) => {
 
         console.log(data)
 
@@ -38,7 +43,13 @@ export default function ActivityForm() {
                 {activity ? 'Edit Activity' : 'Create Activity'}
             </Typography>
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
-                <TextField {...register('title')} label="Title" defaultValue={activity?.title} />
+                <TextField
+                    {...register('title')}
+                    label="Title"
+                    defaultValue={activity?.title}
+                    error={!!errors.title}
+                    helperText={errors.title?.message}
+                />
                 <TextField {...register('description')} label="Description" defaultValue={activity?.description} multiline rows={3} />
                 <TextField {...register('category')} label="Category" defaultValue={activity?.category} />
                 <TextField {...register('date')} label="Date" type='date'
