@@ -1,5 +1,5 @@
-import { TextField, TextFieldProps } from "@mui/material";
-import { useController, FieldValues, UseControllerProps } from "react-hook-form"
+import { TextField, type TextFieldProps } from "@mui/material";
+import { useController, type FieldValues, type UseControllerProps } from "react-hook-form"
 
 type Props<T extends FieldValues> = {} & UseControllerProps<T> & TextFieldProps
 
@@ -9,6 +9,7 @@ export default function TextInput<T extends FieldValues>(props: Props<T>) {
         <TextField
             {...props}
             {...field}
+            value={field.value || ''}
             fullWidth
             variant="outlined"
             error={!!fieldState.error}
