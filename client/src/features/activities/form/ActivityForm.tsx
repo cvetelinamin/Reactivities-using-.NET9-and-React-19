@@ -1,6 +1,6 @@
 import { Box, Button, Paper, Typography } from '@mui/material'
 import { useActivities } from '../../../lib/hooks/useActivities';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { activitySchema, type ActivitySchema } from '../../../lib/schemas/activitySchema';
@@ -16,28 +16,40 @@ export default function ActivityForm() {
         mode: 'onTouched',
         resolver: zodResolver(activitySchema)
     });
+    const navigate = useNavigate();
     const { id } = useParams();
     const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id);
 
     useEffect(() => {
-        if (activity) reset(activity);
+        if (activity) reset({
+            ...activity,
+            location: {
+                city: activity.city,
+                venue: activity.venue,
+                latitude: activity.latitude,
+                longitude: activity.longitude
+            }
+        });
     }, [activity, reset])
 
     const onSubmit = async (data: ActivitySchema) => {
 
-        console.log(data)
+        const { location, ...rest } = data;
+        const flattenedData = { ...rest, ...location };
 
-        // if (activity) {
-        //     data.id = activity.id;
-        //     await updateActivity.mutateAsync(data as unknown as Activity);
-        //     navigate(`/activities/${activity.id}`)
-        // } else {
-        //     createActivity.mutate(data as unknown as Activity, {
-        //         onSuccess: (id) => {
-        //             navigate(`/activities/${id}`)
-        //         }
-        //     });
-        // }
+        try {
+            if (activity) {
+                updateActivity.mutate({ ...activity, ...flattenedData }, {
+                    onSuccess: () => navigate(`/activities/${activity.id}`)
+                })
+            } else {
+                createActivity.mutate(flattenedData, {
+                    onSuccess: (id) => navigate(`/activities/${id}`)
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     if (isLoadingActivity) return <Typography>Loading...</Typography>
@@ -50,13 +62,16 @@ export default function ActivityForm() {
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
                 <TextInput label='Title' control={control} name='title' />
                 <TextInput label='Description' control={control} name='description' multiline rows={3} />
-                <SelectInput
-                    items={categoryOptions}
-                    label='Category'
-                    control={control}
-                    name='category'
-                />
-                <DateTimeInput label='Date' control={control} name='date' />
+                <Box display='flex' gap={3}>
+                    <SelectInput
+                        items={categoryOptions}
+                        label='Category'
+                        control={control}
+                        name='category'
+                    />
+                    <DateTimeInput label='Date' control={control} name='date' />
+                </Box>
+
                 <LocationInput control={control} label='Enter the location' name='location' />
 
 
