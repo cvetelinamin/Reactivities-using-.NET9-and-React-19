@@ -2,7 +2,6 @@ import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import agent from "../api/agent";
 import { useLocation } from "react-router";
 import type { FieldValues } from "react-hook-form";
-import type { Activity } from "../types";
 
 export const useActivities = (id?: string) => {
     const queryClient = new QueryClient();
