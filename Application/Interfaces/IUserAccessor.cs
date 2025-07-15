@@ -10,6 +10,6 @@ namespace Application.Interfaces
     public interface IUserAccessor
     {
         string GetUserId();
-        Task<User> GetUserAsync(int id);
+        Task<User> GetUserAsync();
     }
 }

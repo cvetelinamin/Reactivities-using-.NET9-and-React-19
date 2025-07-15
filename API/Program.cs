@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Application.Interfaces;
-using Infastructure;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
