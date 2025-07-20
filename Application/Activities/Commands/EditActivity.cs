@@ -25,7 +25,7 @@ namespace Application.Activities.Commands
             {
                 var activity = await context.Activities.FindAsync([request.ActivityDto.Id], cancellationToken);
 
-                if (activity != null) return Result<Unit>.Failure("Activity not found", 404);
+                if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
 
                 mapper.Map(request.ActivityDto, activity);
                 
