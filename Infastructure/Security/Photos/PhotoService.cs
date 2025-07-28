@@ -4,13 +4,9 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Security.Photos
+
+namespace Infrastructure.Security.Photos 
 {
     public class PhotoService : IPhotoService
     {
