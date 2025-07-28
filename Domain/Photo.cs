@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Domain
@@ -14,6 +15,8 @@ namespace Domain
 
         // nav properties
         public required string UserId { get; set; }
+
+        [JsonIgnore]
         public User User { get; set; } = null!;
     }
 }
