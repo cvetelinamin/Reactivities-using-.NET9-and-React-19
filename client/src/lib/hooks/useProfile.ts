@@ -74,6 +74,17 @@ export const useProfile = (id?: string) => {
                 }
             });
         }
+    });
+
+    const deletePhoto = useMutation({
+        mutationFn: async (photoId: string) => {
+            await agent.delete(`/profiles/${photoId}/photos`)
+        },
+        onSuccess: (_, photoId) => {
+            queryClient.setQueryData(['photos', id], (photos: Photo[]) => {
+                return photos?.filter(x => x.id !== photoId)
+            })
+        }
     })
 
 
@@ -88,7 +99,8 @@ export const useProfile = (id?: string) => {
         loadingPhotos,
         isCurrentUser,
         uploadPhoto,
-        setMainPhoto
+        setMainPhoto,
+        deletePhoto
     }
 }
 
