@@ -30,7 +30,11 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 builder.Services.AddCors();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(e =>
+{
+    e.EnableDetailedErrors = true;
+    e.MaximumReceiveMessageSize = 102400000;
+});
 
 builder.Services.AddMediatR(x => { 
     x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>();
