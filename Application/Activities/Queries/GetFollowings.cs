@@ -1,4 +1,5 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using Application.Profiles.DTOs;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -17,7 +18,7 @@ namespace Application.Activities.Queries
             public required string UserId { get; set; }
         }
 
-        public class Handler(AppDbContext appDbContext, IMapper mapper) : IRequestHandler<Query, Result<List<UserProfile>>>
+        public class Handler(AppDbContext appDbContext, IMapper mapper, IUserAccessor userAccessor) : IRequestHandler<Query, Result<List<UserProfile>>>
         {
             public async Task<Result<List<UserProfile>>> Handle(Query request, CancellationToken cancellationToken)
             {
@@ -28,13 +29,13 @@ namespace Application.Activities.Queries
                     case "followers":
                         profiles = await appDbContext.UserFollowings.Where(x => x.TargetId == request.UserId)
                             .Select(x => x.Observer)
-                            .ProjectTo<UserProfile>(mapper.ConfigurationProvider)
+                            .ProjectTo<UserProfile>(mapper.ConfigurationProvider, new { currentUserId = userAccessor.GetUserId()})
                             .ToListAsync(cancellationToken);
                         break;
                     case "followings":
                         profiles = await appDbContext.UserFollowings.Where(x => x.ObserverId == request.UserId)
                             .Select(x => x.Target)
-                            .ProjectTo<UserProfile>(mapper.ConfigurationProvider)
+                            .ProjectTo<UserProfile>(mapper.ConfigurationProvider, new { currentUserId = userAccessor.GetUserId() })
                             .ToListAsync(cancellationToken);
                         break;
                 }
